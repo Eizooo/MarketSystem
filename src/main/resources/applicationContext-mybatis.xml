@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+    <!--属性占位文件引入，可以通过${属性名}获得属性文件中的内容-->
+    <!--Maven项目，application-context.xml、db.properties文件均放置在src/main/resources目录下，
+    Tomcat部署项目，src/main/resources目录下的配置文件默认位置为：{项目名}/WEB-INF/classes，
+    而Spring却在项目根目录下寻找，肯定找不到，因此，配置时指定classpath目录下寻找即可。-->
+    <context:property-placeholder location="classpath:database.properties" />
+
+    <!--定义一个druid数据库连接池对象，并交由 spring 同一管理创建一个驱动管理数据源的bean -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <!-- 连接数据库的驱动，连接字符串，用户名和登录密码-->
+        <property name="driverClassName" value="${druid.driver}"/>
+        <property name="url" value="${druid.url}"/>
+        <property name="username" value="${druid.username}"/>
+        <property name="password" value="${druid.password}"/>
+
+        <!-- 数据池中最大连接数和最小连接数-->
+        <property name="maxActive" value="${druid.max}"/>
+        <property name="minIdle" value="${druid.min}"/>
+    </bean>
+
+    <!--创建一个sql会话工厂bean，相当于获得 获得sqlSessionFactory对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 指定数据源 ref对应上面的数据源的ID -->
+        <property name="dataSource" ref="dataSource" />
+        <!--类型别名包，默认引入下的所有类 -->
+        <property name="typeAliasesPackage" value="com.ssm.model"></property>
+        <!--指定sql映射xml文件的路径 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+        <!--上面两句等同于>>>>引用Mybatis中的配置文件-->
+        <!--<property name="configLocation" value="mybatis-config.xml"></property>-->
+    </bean>
+
+    <!--相当于得到UserMapperImpl对象 这样的写法针对UserMapperImpl没有复杂业务逻辑时,不用手工编码UserMapperImpl类-->
+    <!-- MapperFactoryBean里面封装了getMapper()的过程-->
+<!--    <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+<!--        <property name="mapperInterface" value="com.ssm.dao.UserMapper"/>-->
+<!--        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+<!--    </bean>-->
+
+
+    <!--自动扫描映射接口-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定sql会话工厂，在上面配置过的 -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        <!-- 指定基础包，即自动扫描com.ssm.dao这个包以及它的子包下的所有映射接口类 -->
+        <property name="basePackage" value="com.ssm.dao"></property>
+    </bean>
+
+</beans>

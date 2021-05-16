@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="com.ssm.dao.UserMapper">
+    <select id="getUserName" resultType="String">
+        select username from smbms_user
+    </select>
+    <select id="getUserList" resultType="User">
+        select * from smbms_user
+    </select>
+
+    <select id="getUser" resultType="User">
+        select * from smbms_user where userCode = #{userCode}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        insert into smbms_user(userCode,userName,userPassword,gender,birthday,phone,address,userRole,createdBy,creationDate,idPicPath)
+                        values (#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate},#{idPicPath})
+    </insert>
+
+    <insert id="addUserAddress" parameterType="Address">
+        insert into smbms_address(contact,addressDesc,postCode,tel)
+                    values (#{contact},#{addressDesc},#{postCode},#{tel})
+    </insert>
+
+    <!--封装成对象入参-->
+    <update id="modify" parameterType="User">
+        update smbms_user set userPassword=#{userPassword},userName=#{userName},phone=#{phone}
+                        where id=#{id}
+    </update>
+    <!--使用多参数入参-->
+    <update id="modifyPassword">
+        update smbms_user set userPassword=#{userPassword}
+        where id=#{id}
+    </update>
+
+    <update id="modifyFilter" parameterType="User">
+        update smbms_user
+            <trim prefix="set" suffixOverrides="," suffix="where id = #{id}">
+                <if test="userCode != null">userCode = #{userCode},</if>
+                <if test="userName != null">userName = #{userName},</if>
+                <if test="userPassword != null">userPassword = #{userPassword},</if>
+                <if test="gender != null">gender = #{gender},</if>
+                <if test="birthday != null">birthday = #{birthday},</if>
+                <if test="phone != null">phone = #{phone},</if>
+                <if test="address != null">address = #{address},</if>
+                <if test="userRole != null">userRole = #{userRole},</if>
+                <if test="createdBy != null">createdBy = #{createdBy},</if>
+                <if test="creationDate != null">creationDate = #{creationDate},</if>
+                <if test="modifyBy != null">modifyBy = #{modifyBy},</if>
+                <if test="modifyDate != null">modifyDate = #{modifyDate},</if>
+            </trim>
+    </update>
+
+    <delete id="deleteUserById" parameterType="Integer">
+        delete from smbms_user where id=#{id}
+    </delete>
+
+    <resultMap id="userRoleName" type="User">
+        <id property="id" column="id"/>
+        <result property="userRoleName" column="roleName"/>
+    </resultMap>
+    <select id="getUserById" parameterType="Integer" resultMap="userRoleName">
+        select u.*,r.roleName from smbms_user u,smbms_role r
+            where u.id=#{id}  and  u.userRole = r.id
+    </select>
+    <!--有内部嵌套association和collection的没有在resultMap中写明的字段不能映射,此时自动映射不生效-->
+    <resultMap id="userRoleResult" type="User">
+        <id property="id" column="id"></id>
+        <association property="role" javaType="Role">
+            <id property="id" column="r_id"></id>
+            <result property="roleName" column="roleName"></result>
+            <result property="roleCode" column="roleCode"></result>
+        </association>
+    </resultMap>
+    <select id="getUserRoleNameByRoleId" resultMap="userRoleResult" parameterType="Integer">
+        select u.id,r.id as r_id,r.roleName,r.roleCode from smbms_user u ,smbms_role r where u.userRole = r.id and r.id = #{id}
+    </select>
+
+
+    <resultMap id="userListRollPage" type="User">
+        <id property="id" column="id"></id>
+        <result property="userRoleName" column="roleName"></result>
+    </resultMap>
+    <select id="getUserListRollPage" resultType="User">
+        select u.*,r.roleName from smbms_user u ,smbms_role r where u.userRole = r.id
+            <if test="userRole != null and userRole != 0">
+                and u.userRole = #{userRole}
+            </if>
+            <if test="userName != null and userName !=''">
+                and u.userName like CONCAT('%',#{userName},'%')
+            </if>
+            order by creationDate DESC limit #{form} ,#{pageSize}
+    </select>
+
+    <select id="getUserCount" resultType="Integer">
+        select count(1) from smbms_user where 1=1
+        <if test="userRole != null and userRole != 0">
+            and userRole = #{userRole}
+        </if>
+        <if test="userName != null and userName !=''">
+            and userName like CONCAT('%',#{userName},'%')
+        </if>
+    </select>
+
+    <select id="getUserCodeExist" resultType="User">
+        select * from smbms_user where userCode = #{userCode}
+    </select>
+</mapper>

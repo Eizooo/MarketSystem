@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			    http://www.springframework.org/schema/beans/spring-beans.xsd
+			    http://www.springframework.org/schema/context
+			    http://www.springframework.org/schema/context/spring-context.xsd
+			    http://www.springframework.org/schema/aop
+			    http://www.springframework.org/schema/aop/spring-aop.xsd
+			    http://www.springframework.org/schema/tx
+			    http://www.springframework.org/schema/tx/spring-tx.xsd
+			    http://www.springframework.org/schema/mvc
+			    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--  配置包扫描 -->
+    <context:component-scan base-package="com.ssm.controller"/>
+    <!--  开启springmvc注解驱动,主要用于controller中注解扫描  -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <!-- 配置ResponseBody中的解析json的StringHttpMessageConverter的字符编码为UTF-8 -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <!-- 配置Gson的消息转换器 主要解决Json数据过程中的日期格式 配置之后Controller方法中可以直接return对象-->
+            <bean class="org.springframework.http.converter.json.GsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="gson">
+                    <bean class="org.springframework.http.converter.json.GsonFactoryBean">
+                        <property name="serializeNulls" value="true"/>
+                        <property name="disableHtmlEscaping" value="true"/>
+                        <property name="dateFormatPattern" value="yyyy-MM-dd" />
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 映射本地静态资源所在的地址 -->
+    <mvc:resources mapping="/statics/**" location="/statics/"/>
+    <!--  配置视图解析器  -->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--  配置前缀  -->
+        <property name="prefix" value="/views/"/>
+        <!--  配置后缀  -->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--  配置文件上传  -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 配置默认编码   -->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!--  配置所有文件的总上传大小  -->
+        <property name="maxInMemorySize" value="10485760"/>
+    </bean>
+
+</beans>
