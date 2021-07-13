@@ -65,6 +65,7 @@ public class UserController {
      */
     @RequestMapping(value = "/welcome2",method = RequestMethod.GET,params = "username")
     public String welcome2(String username, Model model){
+        System.out.println("SP_TEST分支");
         logger.info("你好,用户:"+username);
         model.addAttribute("username",username);
         //如果没有设置key,那么spring会用string来当作key
