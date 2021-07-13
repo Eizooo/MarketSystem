@@ -49,7 +49,7 @@ public class UserController {
     @RequestMapping("/welcome")
     public String welcome(@RequestParam(value = "username",required = false) String username, Model model){
         try {
-            logger.info("你好,用户:"+username);
+            logger.info("你好,用户:"+username+"欢迎登陆");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,7 +72,7 @@ public class UserController {
         try {
             logger.info("你好,用户:"+username);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("welcome2"+model);
         }
         model.addAttribute("username",username);
         //如果没有设置key,那么spring会用string来当作key
