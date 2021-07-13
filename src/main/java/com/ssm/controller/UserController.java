@@ -49,8 +49,10 @@ public class UserController {
     @RequestMapping("/welcome")
     public String welcome(@RequestParam(value = "username",required = false) String username, Model model){
         try {
+            System.out.println("这是dev分支改过的代码");
             logger.info("你好,用户:"+username+"欢迎登陆");
         } catch (Exception e) {
+            System.out.println("dev");
             e.printStackTrace();
         }
         model.addAttribute("username",username);
@@ -70,6 +72,7 @@ public class UserController {
     @RequestMapping(value = "/welcome2",method = RequestMethod.GET,params = "username")
     public String welcome2(String username, Model model){
         try {
+            System.out.println("这是SP分支改过的代码");
             logger.info("你好,用户:"+username);
         } catch (Exception e) {
             logger.error("welcome2"+model);
