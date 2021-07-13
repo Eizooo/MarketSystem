@@ -25,6 +25,7 @@ public class Test_msg {
         Map<String, String> querys = new HashMap<String, String>();
         querys.put("mobile", "13967184287");
         querys.put("param", "**code**:老婆,么么哒V1.1.4,**minute**:5");
+        querys.put("param", "**code**:老婆,么么哒V1.1.3,**minute**:5");
         querys.put("smsSignId", "2e65b1bb3d054466b82f0c9d125465e2");
         querys.put("templateId", "908e94ccf08b4476ba6c876d13f084ad");
         Map<String, String> bodys = new HashMap<String, String>();
