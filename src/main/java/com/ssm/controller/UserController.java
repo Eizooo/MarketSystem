@@ -48,7 +48,11 @@ public class UserController {
      */
     @RequestMapping("/welcome")
     public String welcome(@RequestParam(value = "username",required = false) String username, Model model){
-        logger.info("你好,用户:"+username);
+        try {
+            logger.info("你好,用户:"+username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         model.addAttribute("username",username);
         //如果没有设置key,那么spring会用string来当作key
         //model.addAttribute(username);如果username是空值,那么这个语句就会报500的错误,所以不建议这么使用
@@ -65,7 +69,11 @@ public class UserController {
      */
     @RequestMapping(value = "/welcome2",method = RequestMethod.GET,params = "username")
     public String welcome2(String username, Model model){
-        logger.info("你好,用户:"+username);
+        try {
+            logger.info("你好,用户:"+username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         model.addAttribute("username",username);
         //如果没有设置key,那么spring会用string来当作key
         model.addAttribute(username);
