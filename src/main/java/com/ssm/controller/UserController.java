@@ -49,6 +49,7 @@ public class UserController {
     @RequestMapping("/welcome")
     public String welcome(@RequestParam(value = "username",required = false) String username, Model model){
         try {
+            System.out.println("这是sp分支提交的代码");
             logger.info("你好,用户:"+username+"欢迎登陆");
         } catch (Exception e) {
             e.printStackTrace();
